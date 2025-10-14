@@ -3,12 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * This program contains all of the default functions that our robot can use for the
  * FTC Decode season.
  * it contains controls for a mecanum chassis, chassis speed variables,
- * a launcher & and several speed variables for it
+ * a launcher & and several speed variables for it, servo control for a hopper (prevent
+ * artifacts from entering the launch area before they should), and intake motors
+ *
  */
 @TeleOp
 public class DecodeTeleOpV1 extends LinearOpMode {
@@ -20,13 +23,18 @@ public class DecodeTeleOpV1 extends LinearOpMode {
     DcMotor bl = null;
     //Flywheel motor
     DcMotor launcher = null;
+
+    //Intake Motors
+    DcMotor leftIntake = null;
+    DcMotor rightIntake = null;
+    //Hopper Servo
+    Servo hopper = null;
     //Wheel input variables (joysticks - left x, left y, right x)
     double x;
     double y;
     double rx;
 
     //Wheel power modifiers
-
     /**
      * modifies the overall speed of the chassis
       */
@@ -36,6 +44,8 @@ public class DecodeTeleOpV1 extends LinearOpMode {
      */
     double direction = 1;
 
+    //Intake power modifier
+    double iSpeed = 0;
     //Flywheel power modifier
     double lSpeed = 0;
     /**
@@ -55,12 +65,26 @@ public class DecodeTeleOpV1 extends LinearOpMode {
      */
     public static final double OFF = 0;
 
+    //Servo Positions
+    /**
+     * Turn the servo to its left-most position
+     */
+    public static final double LEFT = 0;
+    /**
+     * Turn the servo to its right-most position
+     */
+    public static final double RIGHT = 1;
+
     @Override
     public void runOpMode() throws InterruptedException {
         fr = hardwareMap.get(DcMotor.class, "fr");
         fl = hardwareMap.get(DcMotor.class, "fl");
-        br = hardwareMap.get(DcMotor.class, "fr");
-        bl = hardwareMap.get(DcMotor.class, "fr");
+        br = hardwareMap.get(DcMotor.class, "br");
+        bl = hardwareMap.get(DcMotor.class, "bl");
+        launcher = hardwareMap.get(DcMotor.class, "launcher");
+        leftIntake = hardwareMap.get(DcMotor.class,"leftIntake");
+        rightIntake = hardwareMap.get(DcMotor.class,"rightIntake");
+        hopper = hardwareMap.get(Servo.class,"hopper");
 
         waitForStart();
         while (opModeIsActive()) {
@@ -95,6 +119,18 @@ public class DecodeTeleOpV1 extends LinearOpMode {
             if (gamepad2.a) {
                 adjustLSpeed(OFF);
             }
+            if (gamepad1.y) {
+                adjustISpeed(1);
+            }
+            if (gamepad1.a) {
+                adjustISpeed(0);
+            }
+            if (gamepad2.dpad_left) {
+                hopper.setPosition(LEFT);
+            }
+            if (gamepad2.dpad_right) {
+                hopper.setPosition(RIGHT);
+            }
 
         }
     }
@@ -109,20 +145,28 @@ public class DecodeTeleOpV1 extends LinearOpMode {
 
     /**
      * Changes the overall speed the chassis can go to the new value
-     * newSpeed should be a decimal between -1 and 1, and not 0.
-     * @param newSpeed
+     *
+     * @param newSpeed  should be a decimal between -1 and 1, and not 0.
      */
     public void adjustCSpeed(double newSpeed) {
         cSpeed = newSpeed;
     }
 
     /**
-     * Changes the speed the chassis is going to the new value
-     * newSpeed should be any value between -1 and 1
-     * @param newSpeed
+     * Changes the speed the launcher is going to the new value
+     *
+     * @param newSpeed should be any value between -1 and 1
      */
     public void adjustLSpeed(double newSpeed) {
         lSpeed = newSpeed;
+    }
+
+    /**
+     * Changes the speed the intake is going to the new value
+     * @param newSpeed should be any value between -1 and 1
+     */
+    public void adjustISpeed(double newSpeed) {
+        iSpeed = newSpeed;
     }
 
 
