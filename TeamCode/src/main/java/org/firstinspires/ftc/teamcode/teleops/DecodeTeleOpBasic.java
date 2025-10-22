@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * This program contains all of the default functions that our robot can use for the
@@ -20,6 +21,8 @@ public class DecodeTeleOpBasic extends LinearOpMode {
     DcMotor bl = null;
     //Flywheel motor
     DcMotor launcher = null;
+    //Hopper Servo
+    Servo hopper = null;
     //Wheel input variables (joysticks - left x, left y, right x)
     double x;
     double y;
@@ -55,13 +58,24 @@ public class DecodeTeleOpBasic extends LinearOpMode {
      */
     public static final double OFF = 0;
 
+    //Servo Positions
+    /**
+     * Turn the servo to its left-most position
+     */
+    public static final double LEFT = 0;
+    /**
+     * Turn the servo to its right-most position
+     */
+    public static final double RIGHT = 1;
+
     @Override
     public void runOpMode() throws InterruptedException {
         fr = hardwareMap.get(DcMotor.class, "fr");
         fl = hardwareMap.get(DcMotor.class, "fl");
         br = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "fr");
-        launcher = hardwareMap.get(DcMotor.class,"launcher");
+        launcher = hardwareMap.get(DcMotor.class,"launch");
+        hopper = hardwareMap.get(Servo.class,"hS1");
         waitForStart();
         while (opModeIsActive()) {
             x = gamepad1.left_stick_x;
@@ -94,6 +108,12 @@ public class DecodeTeleOpBasic extends LinearOpMode {
             }
             if (gamepad2.a) {
                 adjustLSpeed(OFF);
+            }
+            if (gamepad2.dpad_left) {
+                hopper.setPosition(LEFT);
+            }
+            if (gamepad2.dpad_right) {
+                hopper.setPosition(RIGHT);
             }
 
         }

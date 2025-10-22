@@ -25,8 +25,9 @@ public class RedFar extends LinearOpMode {
         br = hardwareMap.get(DcMotor.class,"br");
         bl = hardwareMap.get(DcMotor.class,"bl");
 
-        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        br.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         waitForStart();
 

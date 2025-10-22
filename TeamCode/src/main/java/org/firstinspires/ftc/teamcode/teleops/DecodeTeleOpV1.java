@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
@@ -73,7 +74,7 @@ public class DecodeTeleOpV1 extends LinearOpMode {
     /**
      * Turn the servo to its right-most position
      */
-    public static final double RIGHT = 1;
+    public static final double RIGHT = 0.3;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -81,10 +82,14 @@ public class DecodeTeleOpV1 extends LinearOpMode {
         fl = hardwareMap.get(DcMotor.class, "fl");
         br = hardwareMap.get(DcMotor.class, "br");
         bl = hardwareMap.get(DcMotor.class, "bl");
-        launcher = hardwareMap.get(DcMotor.class, "launcher");
-        leftIntake = hardwareMap.get(DcMotor.class,"leftIntake");
-        rightIntake = hardwareMap.get(DcMotor.class,"rightIntake");
-        hopper = hardwareMap.get(Servo.class,"hopper");
+        launcher = hardwareMap.get(DcMotor.class, "launch");
+        leftIntake = hardwareMap.get(DcMotor.class,"lI");
+       // rightIntake = hardwareMap.get(DcMotor.class,"rI");
+        hopper = hardwareMap.get(Servo.class,"hS1");
+        br.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
+        launcher.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         waitForStart();
         while (opModeIsActive()) {
@@ -100,6 +105,7 @@ public class DecodeTeleOpV1 extends LinearOpMode {
 
             if (gamepad1.left_stick_button) {
                 flipDirection();
+                sleep(200);
             }
             if (gamepad1.dpad_up) {
                 adjustCSpeed(1);
@@ -109,15 +115,19 @@ public class DecodeTeleOpV1 extends LinearOpMode {
             }
             if (gamepad2.x) {
                 adjustLSpeed(FAR_RANGE_SPEED);
+                launcher.setPower(lSpeed);
             }
             if (gamepad2.y) {
                 adjustLSpeed(MEDIUM_RANGE_SPEED);
+                launcher.setPower(lSpeed);
             }
             if (gamepad2.b) {
                 adjustLSpeed(CLOSE_RANGE_SPEED);
+                launcher.setPower(lSpeed);
             }
             if (gamepad2.a) {
                 adjustLSpeed(OFF);
+                launcher.setPower(lSpeed);
             }
             if (gamepad1.y) {
                 adjustISpeed(1);
@@ -131,7 +141,14 @@ public class DecodeTeleOpV1 extends LinearOpMode {
             if (gamepad2.dpad_right) {
                 hopper.setPosition(RIGHT);
             }
-
+            if (gamepad2.dpad_up) {
+                adjustLSpeed(lSpeed + 0.1);
+            }
+            if (gamepad2.dpad_down) {
+                adjustLSpeed(lSpeed - 0.1);
+            }
+            launcher.setPower(lSpeed);
+            leftIntake.setPower(iSpeed);
         }
     }
 
