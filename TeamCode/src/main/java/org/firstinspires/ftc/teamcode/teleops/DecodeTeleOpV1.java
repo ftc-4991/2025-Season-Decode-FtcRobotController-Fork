@@ -56,11 +56,11 @@ public class DecodeTeleOpV1 extends LinearOpMode {
     /**
      * The speed the launcher must go in order to score from the end of the large launch zone
      */
-    public static final double MEDIUM_RANGE_SPEED = 0.7;
+    public static final double MEDIUM_RANGE_SPEED = 0.6;
     /**
      * The speed the launcher must go in order to score from the "middle" of the large launch zone
      */
-    public static final double CLOSE_RANGE_SPEED = 0.6;
+    public static final double CLOSE_RANGE_SPEED = 0.5;
     /**
      * Remove the power of the launcher
      */
@@ -89,7 +89,7 @@ public class DecodeTeleOpV1 extends LinearOpMode {
         br.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        launcher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
         while (opModeIsActive()) {
@@ -143,12 +143,16 @@ public class DecodeTeleOpV1 extends LinearOpMode {
             }
             if (gamepad2.dpad_up) {
                 adjustLSpeed(lSpeed + 0.1);
+                sleep(100);
             }
             if (gamepad2.dpad_down) {
                 adjustLSpeed(lSpeed - 0.1);
+                sleep(100);
             }
             launcher.setPower(lSpeed);
             leftIntake.setPower(iSpeed);
+            telemetry.addData("launcher speed: ", lSpeed);
+            telemetry.update();
         }
     }
 

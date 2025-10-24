@@ -32,10 +32,10 @@ public class BlueFar extends LinearOpMode {
 
         double power = 1;
 
-        fr.setPower(-power);
-        fl.setPower(power);
-        br.setPower(power);
-        bl.setPower(-power);
+        fr.setPower(power);
+        fl.setPower(-power);
+        br.setPower(-power);
+        bl.setPower(power);
 
         sleep (2000);
 
