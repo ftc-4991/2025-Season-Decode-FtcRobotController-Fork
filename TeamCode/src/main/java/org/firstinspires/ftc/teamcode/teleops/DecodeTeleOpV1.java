@@ -135,10 +135,10 @@ public class DecodeTeleOpV1 extends LinearOpMode {
             if (gamepad1.a) {
                 adjustISpeed(0);
             }
-            if (gamepad2.dpad_left) {
+            if (gamepad2.left_bumper) {
                 hopper.setPosition(LEFT);
             }
-            if (gamepad2.dpad_right) {
+            if (gamepad2.right_bumper) {
                 hopper.setPosition(RIGHT);
             }
             if (gamepad2.dpad_up) {
