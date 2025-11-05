@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous
+@Autonomous(group="Simple Launch")
 public class FarLaunch extends LinearOpMode {
     DcMotor fr = null;
     DcMotor fl = null;

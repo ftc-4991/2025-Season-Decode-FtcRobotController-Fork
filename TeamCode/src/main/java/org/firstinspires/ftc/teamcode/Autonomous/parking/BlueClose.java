@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  * Close refers to the larger launch zone, not the proximity to the drivers
  *
  */
-@Autonomous
+@Autonomous(group="park")
 public class BlueClose extends LinearOpMode {
     DcMotor fr = null;
     DcMotor fl = null;

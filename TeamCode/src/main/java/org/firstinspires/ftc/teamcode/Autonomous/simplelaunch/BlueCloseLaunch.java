@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Far refers to the larger launch zone, not the proximity to the drivers
  *
  */
-@Autonomous
+@Autonomous(group="Simple Launch")
 public class BlueCloseLaunch extends LinearOpMode {
     DcMotor fr = null;
     DcMotor fl = null;

@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
  * Far refers to the larger launch zone, not the proximity to the drivers
  *
  */
-@Autonomous
+@Autonomous(group="park")
 public class RedFar extends LinearOpMode {
     DcMotor fr = null;
     DcMotor fl = null;
