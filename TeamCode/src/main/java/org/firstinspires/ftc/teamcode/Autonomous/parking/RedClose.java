@@ -37,7 +37,7 @@ public class RedClose extends LinearOpMode {
         br.setPower(-power);
         bl.setPower(power);
 
-        sleep (3000);
+        sleep (2000);
 
         fr.setPower(0);
         fl.setPower(0);

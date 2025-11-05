@@ -1,23 +1,17 @@
-package org.firstinspires.ftc.teamcode.Autonomous.parking;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-/**
- *
- * Far refers to the larger launch zone, not the proximity to the drivers
- *
- */
 @Autonomous
-public class RedFar extends LinearOpMode {
+public class WheelTest extends LinearOpMode {
+
     DcMotor fr = null;
     DcMotor fl = null;
     DcMotor br = null;
     DcMotor bl = null;
-
-
     @Override
     public void runOpMode() throws InterruptedException {
         fr = hardwareMap.get(DcMotor.class,"fr");
@@ -31,14 +25,14 @@ public class RedFar extends LinearOpMode {
 
         waitForStart();
 
-        double power = 1;
+        double power = 0.3;
 
-        fr.setPower(-power);
+        fr.setPower(power);
         fl.setPower(power);
         br.setPower(power);
-        bl.setPower(-power);
+        bl.setPower(power);
 
-        sleep (1000);
+        sleep(5000);
 
         fr.setPower(0);
         fl.setPower(0);
