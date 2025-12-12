@@ -14,7 +14,7 @@ public class FarLaunch extends LinearOpMode {
     DcMotor bl = null;
     DcMotor launch = null;
     Servo hopper = null;
-    public static final double LEFT = 0;
+    public static final double LEFT = -0.3;
     /**
      * Turn the servo to its right-most position
      */
@@ -35,32 +35,32 @@ public class FarLaunch extends LinearOpMode {
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         launch.setDirection(DcMotorSimple.Direction.REVERSE);
         launch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        hopper.setPosition(RIGHT);
 
         waitForStart();
         double power = 1;
-        launch.setPower(0.9);
-        sleep(301);
+        launch.setPower(0.80);
+        sleep(4000);
         //Opens and closes the hopper 3 times to launch
-        hopper.setPosition(RIGHT);
-        sleep(150);
         hopper.setPosition(LEFT);
-        sleep(200);
+        sleep(600);
         hopper.setPosition(RIGHT);
-        sleep(150);
+        sleep(2000);
         hopper.setPosition(LEFT);
-        sleep(200);
+        sleep(600);
         hopper.setPosition(RIGHT);
-        sleep(150);
+        sleep(2500);
         hopper.setPosition(LEFT);
-        sleep(200);
+        sleep(600);
+        hopper.setPosition(RIGHT);
+        sleep(2000);
         launch.setPower(0);
 
-        fr.setPower(power);
-        fl.setPower(power);
-        br.setPower(power);
-        bl.setPower(power);
-        sleep(750);
+        fr.setPower(-power);
+        fl.setPower(-power);
+        br.setPower(-power);
+        bl.setPower(-power);
+        sleep(300);
         fr.setPower(0);
         fl.setPower(0);
         br.setPower(0);

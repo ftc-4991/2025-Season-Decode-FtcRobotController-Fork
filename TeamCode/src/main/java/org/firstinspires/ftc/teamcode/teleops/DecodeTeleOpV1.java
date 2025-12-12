@@ -52,15 +52,15 @@ public class DecodeTeleOpV1 extends LinearOpMode {
     /**
      * The speed the launcher must go in order to score from the back launch zone
      */
-    public static final double FAR_RANGE_SPEED = 0.8;
+    public static final double FAR_RANGE_SPEED = 0.75;
     /**
      * The speed the launcher must go in order to score from the end of the large launch zone
      */
-    public static final double MEDIUM_RANGE_SPEED = 0.6;
+    public static final double MEDIUM_RANGE_SPEED = 0.65;
     /**
      * The speed the launcher must go in order to score from the "middle" of the large launch zone
      */
-    public static final double CLOSE_RANGE_SPEED = 0.5;
+    public static final double CLOSE_RANGE_SPEED = 0.55;
     /**
      * Remove the power of the launcher
      */
@@ -68,11 +68,11 @@ public class DecodeTeleOpV1 extends LinearOpMode {
 
     //Servo Positions
     /**
-     * Turn the servo to its left-most position
+     * Turn the servo to its left-most (open) position
      */
     public static final double LEFT = 0;
     /**
-     * Turn the servo to its right-most position
+     * Turn the servo to its right-most (closed) position
      */
     public static final double RIGHT = 0.3;
 
@@ -113,19 +113,19 @@ public class DecodeTeleOpV1 extends LinearOpMode {
             if (gamepad1.dpad_down) {
                 adjustCSpeed(0.5);
             }
-            if (gamepad2.x) {
+            if (gamepad2.y) {
                 adjustLSpeed(FAR_RANGE_SPEED);
                 launcher.setPower(lSpeed);
             }
-            if (gamepad2.y) {
+            if (gamepad2.x) {
                 adjustLSpeed(MEDIUM_RANGE_SPEED);
                 launcher.setPower(lSpeed);
             }
-            if (gamepad2.b) {
+            if (gamepad2.a) {
                 adjustLSpeed(CLOSE_RANGE_SPEED);
                 launcher.setPower(lSpeed);
             }
-            if (gamepad2.a) {
+            if (gamepad2.b) {
                 adjustLSpeed(OFF);
                 launcher.setPower(lSpeed);
             }
@@ -135,19 +135,27 @@ public class DecodeTeleOpV1 extends LinearOpMode {
             if (gamepad1.a) {
                 adjustISpeed(0);
             }
+            //"Opens" the hopper
             if (gamepad2.left_bumper) {
                 hopper.setPosition(LEFT);
             }
+            //"Closes" the  hopper
             if (gamepad2.right_bumper) {
                 hopper.setPosition(RIGHT);
             }
             if (gamepad2.dpad_up) {
-                adjustLSpeed(lSpeed + 0.1);
+                adjustLSpeed(lSpeed + 0.05);
                 sleep(100);
             }
             if (gamepad2.dpad_down) {
-                adjustLSpeed(lSpeed - 0.1);
+                adjustLSpeed(lSpeed - 0.05);
                 sleep(100);
+            }
+            //
+            if (gamepad2.right_trigger >= 0.5) {
+                hopper.setPosition(LEFT);
+                sleep(250);
+                hopper.setPosition(RIGHT);
             }
             launcher.setPower(lSpeed);
             leftIntake.setPower(iSpeed);

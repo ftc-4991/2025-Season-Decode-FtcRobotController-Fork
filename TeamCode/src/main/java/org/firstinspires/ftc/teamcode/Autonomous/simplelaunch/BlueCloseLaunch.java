@@ -42,44 +42,45 @@ public class BlueCloseLaunch extends LinearOpMode {
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         launch.setDirection(DcMotorSimple.Direction.REVERSE);
         launch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hopper.setPosition(RIGHT);
 
         waitForStart();
 
         double power = 1;
         //make the robot back up
-        fr.setPower(-power);
-        fl.setPower(-power);
-        br.setPower(-power);
-        bl.setPower(-power);
+        fr.setPower(power);
+        fl.setPower(power);
+        br.setPower(power);
+        bl.setPower(power);
 
-        sleep (1252);
+        sleep (600);
         //turn off wheels and start the launcher
         fr.setPower(0);
         fl.setPower(0);
         br.setPower(0);
         bl.setPower(0);
         launch.setPower(0.67);
-        sleep(301);
+        sleep(3000);
         //Opens and closes the hopper 3 times to launch
-        hopper.setPosition(RIGHT);
-        sleep(150);
         hopper.setPosition(LEFT);
-        sleep(200);
+        sleep(600);
         hopper.setPosition(RIGHT);
-        sleep(150);
+        sleep(2000);
         hopper.setPosition(LEFT);
-        sleep(200);
+        sleep(600);
         hopper.setPosition(RIGHT);
-        sleep(150);
+        sleep(2000);
         hopper.setPosition(LEFT);
-        sleep(200);
+        sleep(600);
+        hopper.setPosition(RIGHT);
+        sleep(600);
         launch.setPower(0);
         //Strafe left for 3/4 of a second
         fr.setPower(-power);
         fl.setPower(power);
-        br.setPower(-power);
-        bl.setPower(power);
-        sleep(750);
+        br.setPower(power);
+        bl.setPower(-power);
+        sleep(1000);
         //turn off wheels
         fr.setPower(0);
         fl.setPower(0);
