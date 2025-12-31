@@ -5,7 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+
 
 /**
  * This program contains all of the default functions that our robot can use for the
@@ -16,7 +18,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  *
  */
 @TeleOp
-public class DecodeTeleOpV1 extends LinearOpMode {
+public class DecodeTeleOpV2 extends LinearOpMode {
     //Motors
     //Wheel motors
     DcMotor fr = null;
@@ -53,15 +55,68 @@ public class DecodeTeleOpV1 extends LinearOpMode {
     /**
      * The speed the launcher must go in order to score from the back launch zone
      */
+    @Deprecated
     public static final double FAR_RANGE_SPEED = 0.75;
     /**
      * The speed the launcher must go in order to score from the end of the large launch zone
      */
+    @Deprecated
     public static final double MEDIUM_RANGE_SPEED = 0.65;
     /**
      * The speed the launcher must go in order to score from the "middle" of the large launch zone
      */
+    @Deprecated
     public static final double CLOSE_RANGE_SPEED = 0.55;
+    /**
+     * The Velocity the launcher should be set to in order to score from the back launch zone
+     */
+    public static final double FAR_RANGE_VELOCITY = 980;
+    /**
+     * The Velocity the launcher should be set to in order to score from the "end" of the large launch zone
+     */
+    public static final double MEDIUM_RANGE_VELOCITY = 730;
+    /**
+     * The speed the launcher must go in order to score from the "middle" of the large launch zone
+     */
+    public static final double CLOSE_RANGE_VELOCITY = 729;
+    /**
+     * The Value that "F" Should be set to score at "medium" range
+     */
+    public static final double MEDIUM_RANGE_F_VALUE = 26.4;
+    /**
+     * The Value that "P" Should be set to to score at "medium" range
+     */
+    public static final double MEDIUM_RANGE_P_VALUE = 80;
+    /**
+     * The Value that "F" Should be set to score at "far" range
+     */
+    public static final double FAR_RANGE_F_VALUE = 30;
+    /**
+     * The Value that "P" Should be set to to score at "far" range
+     */
+    public static final double FAR_RANGE_P_VALUE = 25;
+    /**
+     * The Value that "F" Should be set to score at "close" range
+     */
+    public static final double CLOSE_RANGE_F_VALUE = 26.4;
+    /**
+     * The Value that "P" Should be set to to score at "close" range
+     */
+    public static final double CLOSE_RANGE_P_VALUE = 80;
+    /**
+     * The Velocity the launcher is attempting to reach
+     */
+    public double currentTargetVelocity = 0;
+    /**
+     *  F = feedforward/power prediction; how much power you think you need to maintain your
+     *  current speed
+     *  */
+    double F = 0;
+    /** P= power; the power being sent to the motor; the farther away from the target velocity,
+     * the more power you want to send; the closer you are, the less power you want to send.
+     * most important constant to fine-tune/control
+     */
+    double P = 0;
     /**
      * Remove the power of the launcher
      */
@@ -90,7 +145,10 @@ public class DecodeTeleOpV1 extends LinearOpMode {
         br.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
-        launcher.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        launcher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, 0, 0, F);
+        launcher.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
         waitForStart();
         while (opModeIsActive()) {
@@ -114,9 +172,30 @@ public class DecodeTeleOpV1 extends LinearOpMode {
             if (gamepad1.dpad_down) {
                 adjustCSpeed(0.5);
             }
+            //when "y" is pressed on Gamepad 2, the target velocity cycles between close, medium, and far
             if (gamepad2.y) {
-                adjustLSpeed(FAR_RANGE_SPEED);
-                launcher.setPower(lSpeed);
+                    if (currentTargetVelocity == FAR_RANGE_VELOCITY){
+                        currentTargetVelocity = MEDIUM_RANGE_VELOCITY;
+                        F = MEDIUM_RANGE_F_VALUE;
+                        P = MEDIUM_RANGE_P_VALUE;
+                        telemetry.addData("Target Velocity at Medium: ", MEDIUM_RANGE_VELOCITY);
+                        sleep(250);
+                    }
+                    else if (currentTargetVelocity == MEDIUM_RANGE_VELOCITY){
+                        currentTargetVelocity = CLOSE_RANGE_VELOCITY;
+                        F = CLOSE_RANGE_F_VALUE;
+                        P = CLOSE_RANGE_P_VALUE;
+                        telemetry.addData("Target Velocity at Close: ", CLOSE_RANGE_VELOCITY);
+                        sleep(250);
+
+                    } else {
+                        currentTargetVelocity = FAR_RANGE_VELOCITY;
+                        F = FAR_RANGE_F_VALUE;
+                        P = FAR_RANGE_P_VALUE;
+                        telemetry.addData("Target Velocity at Far: ", FAR_RANGE_VELOCITY);
+                        sleep(250);
+                    }
+
             }
             if (gamepad2.x) {
                 adjustLSpeed(MEDIUM_RANGE_SPEED);
@@ -127,15 +206,19 @@ public class DecodeTeleOpV1 extends LinearOpMode {
                 launcher.setPower(lSpeed);
             }
             if (gamepad2.b) {
-                adjustLSpeed(OFF);
-                launcher.setPower(lSpeed);
+                currentTargetVelocity = 0;
+                F = 0;
+                P = 0;
+                PIDFCoefficients newPidfCoefficients = new PIDFCoefficients(P, 0,0, F);
+                launcher.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, newPidfCoefficients);
+                launcher.setVelocity(currentTargetVelocity);
             }
             if (gamepad1.y) {
                 adjustISpeed(1);
             }
-            if (gamepad1.a) {
-                adjustISpeed(0);
-            }
+//            if (gamepad1.a) {
+//                adjustISpeed(0);
+//            }
             //"Opens" the hopper
             if (gamepad2.left_bumper) {
                 hopper.setPosition(LEFT);
@@ -155,65 +238,84 @@ public class DecodeTeleOpV1 extends LinearOpMode {
             //
             if (gamepad2.right_trigger >= 0.5) {
                 hopper.setPosition(LEFT);
-                sleep(250);
+                sleep(300);
+                hopper.setPosition(RIGHT);
+            }
+            if (gamepad2.left_trigger >= 0.5) {
+                hopper.setPosition(LEFT);
+                sleep(600);
+                hopper.setPosition(RIGHT);
+                sleep(3000);
+                hopper.setPosition(LEFT);
+                sleep(600);
+                hopper.setPosition(RIGHT);
+                sleep(3000);
+                hopper.setPosition(LEFT);
+                sleep(600);
                 hopper.setPosition(RIGHT);
             }
             //button that should fire all artifacts in (not-so) rapid succession
             //Speed should be used for the closer range
             if (gamepad1.a) {
-                lSpeed = 0.55;
-                launcher.setPower(lSpeed);
 
-                sleep(4000);
+                //sleep(4000);
                 hopper.setPosition(LEFT);
-                sleep(250);
+                sleep(600);
                 hopper.setPosition(RIGHT);
 
-                sleep(4000);
+                sleep(1200);
                 hopper.setPosition(LEFT);
-                sleep(250);
+                sleep(600);
                 hopper.setPosition(RIGHT);
 
-                sleep(4000);
+                sleep(1200);
                 hopper.setPosition(LEFT);
-                sleep(250);
+                sleep(600);
                 hopper.setPosition(RIGHT);
 
-                lSpeed = 0;
-                launcher.setPower(lSpeed);
+
             }
             //button that should fire all artifacts in (not-so) rapid succession
             //Speed should be used for the farther range
-            if (gamepad1.a) {
-                lSpeed = 0.75;
-                launcher.setPower(lSpeed);
+            if (gamepad1.b) {
 
-                sleep(4000);
+                //sleep(4000);
                 hopper.setPosition(LEFT);
-                sleep(250);
+                sleep(600);
                 hopper.setPosition(RIGHT);
 
                 sleep(4000);
                 hopper.setPosition(LEFT);
-                sleep(250);
+                sleep(600);
                 hopper.setPosition(RIGHT);
 
                 sleep(4000);
                 hopper.setPosition(LEFT);
-                sleep(250);
+                sleep(600);
                 hopper.setPosition(RIGHT);
-
-                lSpeed = 0;
-                launcher.setPower(lSpeed);
             }
-            launcher.setPower(lSpeed);
             leftIntake.setPower(iSpeed);
+            PIDFCoefficients newPidfCoefficients = new PIDFCoefficients(P, 0,0, F);
+            launcher.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, newPidfCoefficients);
+            launcher.setVelocity(currentTargetVelocity);
+
+            double curVelocity = launcher.getVelocity();
+            double error = currentTargetVelocity - curVelocity;
+            if (currentTargetVelocity == FAR_RANGE_VELOCITY) {
+                telemetry.addData("Current Target Velocity:", FAR_RANGE_VELOCITY);
+            } else if (currentTargetVelocity == MEDIUM_RANGE_VELOCITY) {
+                telemetry.addData("Current Target Velocity:", MEDIUM_RANGE_VELOCITY);
+            } else if (currentTargetVelocity == CLOSE_RANGE_VELOCITY) {
+                telemetry.addData("Current Target Velocity:", CLOSE_RANGE_VELOCITY);
+            }
+            telemetry.addData("Target velocity: ", currentTargetVelocity);
+            telemetry.addData("Current velocity: ", "%.2f", curVelocity);
+            telemetry.addData("Error: ", "%.2f", error);
             telemetry.addData("launcher speed: ", lSpeed);
-            telemetry.addData("Launcher Velocity: ", launcher.getVelocity());
+            telemetry.addLine("----------------------------");
             telemetry.update();
         }
     }
-
     /**
      * inverts the direction variable
      * This will make the robot go "backwards" when going "forwards"
@@ -236,6 +338,7 @@ public class DecodeTeleOpV1 extends LinearOpMode {
      *
      * @param newSpeed should be any value between -1 and 1
      */
+    @Deprecated
     public void adjustLSpeed(double newSpeed) {
         lSpeed = newSpeed;
     }

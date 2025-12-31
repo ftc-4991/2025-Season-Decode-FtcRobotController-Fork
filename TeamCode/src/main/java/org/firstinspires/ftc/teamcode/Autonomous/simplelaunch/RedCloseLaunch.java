@@ -60,17 +60,17 @@ public class RedCloseLaunch extends LinearOpMode {
         fl.setPower(0);
         br.setPower(0);
         bl.setPower(0);
-        launch.setPower(0.67);
-        sleep(3000);
+        launch.setPower(0.55);
+        sleep(4000);
         //Opens and closes the hopper 3 times to launch
         hopper.setPosition(LEFT);
         sleep(600);
         hopper.setPosition(RIGHT);
-        sleep(2000);
+        sleep(4000);
         hopper.setPosition(LEFT);
         sleep(600);
         hopper.setPosition(RIGHT);
-        sleep(2000);
+        sleep(4000);
         hopper.setPosition(LEFT);
         sleep(600);
         hopper.setPosition(RIGHT);

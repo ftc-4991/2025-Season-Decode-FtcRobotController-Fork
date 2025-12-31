@@ -39,21 +39,21 @@ public class FarLaunch extends LinearOpMode {
 
         waitForStart();
         double power = 1;
-        launch.setPower(0.80);
+        launch.setPower(0.75);
         sleep(4000);
         //Opens and closes the hopper 3 times to launch
         hopper.setPosition(LEFT);
         sleep(600);
         hopper.setPosition(RIGHT);
-        sleep(2000);
+        sleep(4000);
         hopper.setPosition(LEFT);
         sleep(600);
         hopper.setPosition(RIGHT);
-        sleep(2500);
+        sleep(4000);
         hopper.setPosition(LEFT);
         sleep(600);
         hopper.setPosition(RIGHT);
-        sleep(2000);
+        sleep(4000);
         launch.setPower(0);
 
         fr.setPower(-power);
